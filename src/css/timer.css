@@ -1,0 +1,19 @@
+.timer{
+    font-size: 70px;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+
+}
+
+.red{
+    color: rgb(202, 33, 33);
+}
+
+.yellow{
+    color: rgb(196, 196, 26);
+}
+
+.green{
+    color: rgb(33, 199, 33);
+}
