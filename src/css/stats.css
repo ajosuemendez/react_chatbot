@@ -1,0 +1,8 @@
+.stats-heart{
+    width: 40px;
+}
+
+.disable{
+    opacity: 0.4;
+    transform: rotate(7deg);
+}

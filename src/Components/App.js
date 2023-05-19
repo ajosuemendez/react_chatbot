@@ -3,6 +3,7 @@ import Window from "./Window";
 import ChatBox from "./ChatBox";
 import Header from "./Header";
 import Timer from "./Timer";
+import Stats from "./Stats";
 // import useAxios from "../hooks/useAxios";
 // import axios from '../apis/rasaAPI';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -17,6 +18,9 @@ export default function App() {
 
     const [isGameStarted, setIsGameStarted] = React.useState(false);
     const [gameStartTime, setGameStartTime] = React.useState();
+
+    const totalLives = 10
+    const [currentLives, setCurrentLives] = React.useState(totalLives);
 
     
     const [inputMessage, setInputMessage] = React.useState(); 
@@ -73,6 +77,9 @@ export default function App() {
                     setChatMessageList(prev => {
                         return [...prev, message];
                     })
+                    if (message.message.includes("You have lost a life!")) {
+                        setCurrentLives(prev => prev - 1)
+                    }
                 })
 
               })
@@ -119,6 +126,7 @@ export default function App() {
                     <Header/>
                     <Window messageList={chatMessageList} timeTitle={gameStartTime}/>
                     <ChatBox submitHandler={submitHandler}/>
+                    <Stats currentLives={currentLives} totalLives={totalLives}/>
                     <Timer/>
                 </div>
             </Container>

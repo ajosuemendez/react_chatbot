@@ -31,7 +31,7 @@ export default function Timer() {
     };
 
     return (
-        <div className="mt-4">
+        <div className="mt-2">
             <h1 className={`timer ${direction === "up" ? "red" : Number(seconds) < 300 ? "yellow" : "green"}`}>{formatTime(seconds)}</h1>
         </div>
     );
