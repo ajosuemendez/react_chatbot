@@ -24,7 +24,9 @@ export default function App() {
 
     
     const [inputMessage, setInputMessage] = React.useState(); 
+    const [isLoadingModel, setIsLoadingModel] = React.useState(true);
     const [isLoading, setIsLoading] = React.useState(false);
+
     const [error, setError] = React.useState(null);
 
     const counterRef = React.useRef(0);
@@ -91,44 +93,80 @@ export default function App() {
 
     },[inputMessage])
 
-    // GET THE FIRST MESSAGE FROM THE CHAT
+
+     // GET THE FIRST MESSAGE FROM THE CHAT
     React.useEffect(()=>{
 
         if(counterRef.current < 1) {
-        
-        setIsLoading(true);
-        axios.get('http://localhost:4000/')
-        .then(response => {
-            setIsLoading(false);
-            response.data.forEach(message => {
-                setChatMessageList(prev => {
-                    return [...prev, message];
+            
+            setIsLoadingModel(true);
+
+            const url_model = 'http://localhost:5005/model';
+            const modelPath = "/home/alejandro/rasaprojects/escape_room_project/models/20230524-185046-old-distance.tar.gz";
+
+
+            axios.delete(url_model).then(delRes => {
+
+                console.log("Rasa Model deleted it...")
+
+                axios.put(url_model, { model_file: modelPath }).then(res=> {
+                    console.log('Rasa model loaded successfully.');
+    
+                    axios.get('http://localhost:4000/')
+                    .then(response => {
+                        setIsLoadingModel(false);
+                        response.data.forEach(message => {
+                            setChatMessageList(prev => {
+                                return [...prev, message];
+                            })
+                        })
+    
+                    })
+                    .catch(error => {
+                        setIsLoadingModel(false);
+                        setError(error);
+                    });
+    
+    
+                }).catch( error => {
+                    console.log('Rasa model loaded FAILED.');
                 })
+    
+
+            }).catch(error => {
+                console.log(error)
             })
 
-        })
-        .catch(error => {
-            setIsLoading(false);
-            setError(error);
-        });
+            
+            counterRef.current = counterRef.current + 1;
 
-        counterRef.current = counterRef.current + 1;
-
-    }
+        }
 
 
      },[])
 
+     
+
     return(
-        <>  
+        <> 
             <Container className="d-flex justify-content-center" style={{minHeight: "100vh"}}>
-                <div className="w-100" style={{maxWidth: "800px"}}>
-                    <Header/>
-                    <Window messageList={chatMessageList} timeTitle={gameStartTime}/>
-                    <ChatBox submitHandler={submitHandler}/>
-                    <Stats currentLives={currentLives} totalLives={totalLives}/>
-                    <Timer/>
-                </div>
+            {isLoadingModel && 
+            <div className="loading-container">
+                <h1 className="loading-title">The game is being loaded...</h1>
+                <div className="loading"></div>
+
+            </div>
+            }
+            {!isLoadingModel && 
+            <div className="w-100 displaySmooth" style={{maxWidth: "800px"}}>
+                <Header/>
+                <Window messageList={chatMessageList} timeTitle={gameStartTime}/>
+                <ChatBox submitHandler={submitHandler}/>
+                <Stats currentLives={currentLives} totalLives={totalLives}/>
+                <Timer/>
+            </div>
+            } 
+                
             </Container>
         </>
     )
